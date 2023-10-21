@@ -1,0 +1,3 @@
+import PythonWrapper
+
+PythonWrapper.test()
