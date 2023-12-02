@@ -1,19 +1,40 @@
-/*
-#include <emscripten/emscripten.h>
-EMSCRIPTEN_KEEPALIVE
-*/ // Use this code when compiling to WASM/JS
-//Todo: make JS use the DLL and build a wrapper instead of WASM
+#include <stdbool.h>
 
+#define växling shunting
+#define förIndikator preIndicator
+#define balis balise
+#define bromsverksomkopplare brakeSystemSwitch
+#define stoppassage dangerPass
 #define STH Vmax //Största Tillåtna Hastighet
+#define retardationstal redardationRate
+#define överskridande exceedance
+#define lossningsKnapp releaseButton
+
 // "Translating" The Swedish railway terms to the general English railway terms to make it work with both
 // Also this is a programming warcrime I believe
 
-struct ATCData {
-	int Vmax;	//saved in km/h
-	int Length;	//saved in meters
-
+struct ATCUnit {
+	bool shunting;
+	bool shuntingLamp;
+	int preIndicator;
+	bool ATCErrorLamp;
+	bool baliseErrorLamp;
+	bool speedingLamp;
+	int mainIndicator;
+	bool ATCBrakeLamp;
+	bool increaseLamp;
+	bool brakeSystemSwitch;
+	bool dangerPass;
+	int brightness;
+	int volume;
+	int Vmax;				//saved in km/h
+	int length;				//saved in meters
+	int redardationRate;	// saved in m/s2 // if 258 then Stax D // if 298 then normal setting
+	int exceedance;			// saved in percentage
+	char sound[2];
 };
 
-__declspec(dllexport) int thisReturnsOne() {
-	return 1;
-}
+struct ATCButtonStates {
+	bool releaseButton;
+	bool increaseButton;
+};

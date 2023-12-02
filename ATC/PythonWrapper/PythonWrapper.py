@@ -1,7 +1,10 @@
-# Note that I, Sparkles am not a Python dev, please help me expand and improve this code.
 import ctypes
+import os
 
-ATC = ctypes.CDLL("E:\!CODING\ATC\ATC\PythonWrapper\ATC.dll")
+if os.name == "nt":
+    ATC = ctypes.CDLL("../../ATC/build/ATC.dll")
+else:
+    ATC = ctypes.CDLL("../../ATC/build/ATC.so")
 
 ATC.thisReturnsOne.argtypes = []
 ATC.thisReturnsOne.restype = ctypes.c_int
