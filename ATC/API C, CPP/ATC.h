@@ -1,13 +1,13 @@
 #include <stdbool.h>
 
-#define växling shunting
-#define förIndikator preIndicator
+#define vÃ¤xling shunting
+#define fÃ¶rIndikator preIndicator
 #define balis balise
 #define bromsverksomkopplare brakeSystemSwitch
 #define stoppassage dangerPass
-#define STH Vmax //Största Tillåtna Hastighet
+#define STH Vmax //StÃ¶rsta TillÃ¥tna Hastighet
 #define retardationstal redardationRate
-#define överskridande exceedance
+#define Ã–verskridande exceedance
 #define lossningsKnapp releaseButton
 
 // "Translating" The Swedish railway terms to the general English railway terms to make it work with both
