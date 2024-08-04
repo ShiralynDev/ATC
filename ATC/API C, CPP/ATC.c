@@ -6,44 +6,77 @@
 
 #include "ATC.h"
 
-static struct ATCUnit ATC = {0};
-static struct ATCButtonStates ATCButtons = {0};
+static struct ATCUnit ATC = { 0 };
 
-ATC_API int thisReturnsOne() {
-	return 1;
-}
-
+// Resets the ATC unit
 ATC_API void resetATC() {
-	ATC = (struct ATCUnit){0};
-	ATCButtons = (struct ATCButtonStates ){0}; // if they for some reason were not alredy false
+	ATC = (struct ATCUnit){ 0 };
 }
 
-ATC_API struct ATCUnit getATCData() {
-	return ATC;
+// Turn ATC on/off
+ATC_API void powerATC(bool arg) {
+	ATC.power = arg;
 }
 
+// Sets the shunting of the ATC unit
 ATC_API void shunting(bool arg) {
 	ATC.shunting = arg;
 }
 
 //preIndicator
 
+// ATC error
+
+// balise error
+
+// speeding lamp
+
 //mainIndicator
 
-ATC_API void releaseButton(bool arg) {
-	ATCButtons.releaseButton = arg;
+//ATC break
+
+/// <summary>
+/// Takes a bool to turn on / off the Release Button
+/// </summary>
+/// <param name="bool arg"></param>
+/// <returns>Returns 0 on valid and 1 on invalid</returns>
+ATC_API int releaseButton(bool arg) {
+	if (ATC.power != true || ATC.ATCBrakeLamp == 0)
+		return 1;
+	ATC.releaseButton = arg;
+	return 0;
 }
 
-ATC_API void increaseButton(bool arg) {
-	ATCButtons.increaseButton = arg;
+/// <summary>
+/// Takes a bool to turn on / off the Increase Button
+/// </summary>
+/// <param name="bool arg"></param>
+/// <returns>Returns 0 on valid and 1 on invalid</returns>
+ATC_API int increaseButton(bool arg) {
+	if (ATC.power != true || ATC.increaseLamp == 0) 
+		return 1;
+	ATC.increaseButton = arg;
+	return 0;
 }
 
-ATC_API void brakeSystemSwitch(bool arg) {
+ATC_API int brakeSystemSwitch(bool arg) {
+	if (ATC.power != true)
+		return 1;
 	ATC.brakeSystemSwitch = arg;
+	return 0;
 }
 
-ATC_API void dangerPass(bool arg) {
+ATC_API int dangerPass(bool arg) {
+	if (ATC.power != true)
+		return 1;
 	ATC.dangerPass = arg;
+	return 0;
 }
 
- 
+ATC_API void setBrightness(float brightness) {
+	ATC.brightness = brightness;
+}
+
+ATC_API void setVolume(float volume) {
+	ATC.volume = volume;
+ }
