@@ -20,7 +20,8 @@ ATC_API void powerATC(bool arg) {
 
 // Sets the shunting of the ATC unit
 ATC_API void shunting(bool arg) {
-	ATC.shunting = arg;
+	if (ATC.power == true)
+		ATC.shunting = arg;
 }
 
 //preIndicator
@@ -35,11 +36,8 @@ ATC_API void shunting(bool arg) {
 
 //ATC break
 
-/// <summary>
-/// Takes a bool to turn on / off the Release Button
-/// </summary>
-/// <param name="bool arg"></param>
-/// <returns>Returns 0 on valid and 1 on invalid</returns>
+// Takes a bool to turn on / off the Release Button
+// Returns 0 on valid and 1 on invalid
 ATC_API int releaseButton(bool arg) {
 	if (ATC.power != true || ATC.ATCBrakeLamp == 0)
 		return 1;
@@ -47,11 +45,8 @@ ATC_API int releaseButton(bool arg) {
 	return 0;
 }
 
-/// <summary>
-/// Takes a bool to turn on / off the Increase Button
-/// </summary>
-/// <param name="bool arg"></param>
-/// <returns>Returns 0 on valid and 1 on invalid</returns>
+// Takes a bool to turn on / off the Increase Button
+// Returns 0 on valid and 1 on invalid
 ATC_API int increaseButton(bool arg) {
 	if (ATC.power != true || ATC.increaseLamp == 0) 
 		return 1;
@@ -79,4 +74,19 @@ ATC_API void setBrightness(float brightness) {
 
 ATC_API void setVolume(float volume) {
 	ATC.volume = volume;
- }
+}
+
+ATC_API void update(int speed) {
+	ATC.currentDrivingSpeed = speed;
+}
+
+ATC_API void balise(int speed) {
+	if (ATC.currentSpeed < speed) {
+		// Long sound
+	}
+	if (ATC.currentSpeed > speed) {
+		// Short sound
+		ATC.preIndicator = speed;
+	}
+	ATC.currentSpeed = speed;
+}

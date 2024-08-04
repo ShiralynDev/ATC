@@ -40,4 +40,7 @@ struct ATCUnit {
 	int exceedance;			// saved in percentage
 	bool lampError;
 	char sound[2];
+
+	int currentSpeed;
+	int currentDrivingSpeed;
 };
