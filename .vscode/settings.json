@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "atc.h": "c",
-        "stdbool.h": "c"
-    }
+        "stdbool.h": "c",
+        "iostream": "cpp"
+    },
+    "cmake.sourceDirectory": "/home/sparkles/Coding/ATC/Examples/C++"
 }

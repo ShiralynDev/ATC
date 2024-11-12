@@ -8,3 +8,6 @@
 
 static struct ATCUnit ATC = { 0 };
 
+ATC_API int thisRetunsOne() {
+    return 1;
+}
