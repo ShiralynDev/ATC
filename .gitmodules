@@ -1,0 +1,6 @@
+[submodule "Examples/C++/extern/raylib"]
+	path = Examples/C++/extern/raylib
+	url = https://github.com/raysan5/raylib
+[submodule "Examples/C++/extern/RaylibAdditions"]
+	path = Examples/C++/extern/RaylibAdditions
+	url = https://github.com/ShiralynDev/RaylibAdditions
