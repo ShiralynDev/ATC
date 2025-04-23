@@ -23,14 +23,15 @@ file(GLOB SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp)
 
 set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
-add_subdirectory(../../ATC/API_C_CPP ATCLib)
+add_subdirectory(../../ATC/API_C_CPP ATCAPI)
+include_directories(../../ATC/API_C_CPP/include)
 
 # Create the executable
 add_executable(ATCEXAMPLE ${SOURCES} ${RAYLIB_ADDITIONS_SOURCES})
 
 # Link libraries
 target_link_libraries(ATCEXAMPLE PRIVATE raylib)
-target_link_libraries(ATCEXAMPLE PRIVATE ATCLib)
+target_link_libraries(ATCEXAMPLE PRIVATE ATCAPI)
 
 # Apply Release mode specific settings
 if(CMAKE_BUILD_TYPE STREQUAL "Release")

@@ -1,17 +1,23 @@
-#ifdef _WIN32
-#define ATC_API __declspec(dllimport)
-#else
-#define ATC_API extern
-#endif
-
-extern "C" {
-    ATC_API int thisReturnsOne();
-}
-
 #include <iostream>
+#include <ATC.h>
+#include <raylib.h>
 
 int main() {
     std::cout << "Hello world!";
-    std::cout << thisReturnsOne();
+
+    InitWindow(1500, 400, "ATC Simulator");
+    SetTargetFPS(60);
+
+    Texture2D ATCPanel = LoadTexture("../res/textures/cleanATC.png");
+
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(BLACK);
+
+        DrawTexture(ATCPanel, 0, 0, WHITE);
+    
+        EndDrawing();
+    }
+
     return 0;
 }

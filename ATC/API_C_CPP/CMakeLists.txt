@@ -1,18 +1,40 @@
 cmake_minimum_required(VERSION 3.10)
-project(ATCLib)
+project(ATCAPI)
 
-# Set the library type (SHARED for DLL/.so, STATIC for static library)
-add_library(ATCLib SHARED ATC.c)
+add_library(ATCAPI SHARED)
 
-# Define the export macro for Windows builds
-if(WIN32)
-    target_compile_definitions(ATCLib PRIVATE _EXPORTING)
-endif()
-
-# Specify output properties
-set_target_properties(ATCLib PROPERTIES
-    OUTPUT_NAME "ATCLib"
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+target_sources(ATCAPI 
+    PRIVATE
+        src/ATC.c
 )
 
-message(FATAL ${ATCLIB})
+target_include_directories(ATCAPI
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
+
+if(DEFINED CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    message(
+        STATUS
+        "CMAKE_INSTALL_PREFIX is not set\n"
+        "Default value: ${CMAKE_INSTALL_PREFIX}\n"
+        "Will set it to ${CMAKE_SOURCE_DIR}/install"
+    )
+    set(CMAKE_INSTALL_PREFIX
+        "${CMAKE_SOURCE_DIR}/install"
+        CACHE PATH "Where the library will be installed to" FORCE
+    )
+else()
+    message(
+        STATUS
+        "CMAKE_INSTALL_PREFIX was already set\n"
+        "Current value: ${CMAKE_INSTALL_PREFIX}"
+    )
+endif()
+
+set(public_headers
+    include/ATC.h
+)

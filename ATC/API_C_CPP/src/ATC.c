@@ -6,8 +6,8 @@
 
 #include "ATC.h"
 
-static struct ATCUnit ATC = { 0 };
+static struct ATCData ATC = { 0 };
 
-ATC_API int thisRetunsOne() {
+int thisReturnsOne() {
     return 1;
 }
