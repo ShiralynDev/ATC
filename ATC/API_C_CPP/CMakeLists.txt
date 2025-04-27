@@ -6,6 +6,7 @@ add_library(ATCAPI SHARED)
 target_sources(ATCAPI 
     PRIVATE
         src/ATC.c
+        src/RunATC.c
 )
 
 target_include_directories(ATCAPI
