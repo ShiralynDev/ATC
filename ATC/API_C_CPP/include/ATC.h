@@ -31,20 +31,32 @@ the developer want to set the data in their functions for pressing a button ect
 struct internalATCData {
 	int startup; // 0 = off, 1 = startup, 2 = running
 	time_t seconds;
+	bool dataEntryButtonPressed;
 };
 
 struct ATCData {
 	int currentSpeed;
+	bool dataEntryButton;
 };
 
 struct ATCReturnData {
 	int ATCStatus;
+	bool toneF1;
+	bool toneF2;
+	bool shuntingLamp;
 	char preIndicator0;
 	char preIndicator1;
 	char preIndicator2;
+	bool ATCError;
+	bool BaliseError;
+	bool speeding;
 	char mainIndicator0;
 	char mainIndicator1;
 	char mainIndicator2;
+	bool releaseLamp;
+	bool increaseLamp;
+	bool dataEntryLamp;
+	bool smallError;
 };
 
 int thisReturnsOne();

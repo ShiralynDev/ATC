@@ -19,11 +19,11 @@ int thisReturnsOne() {
 void setATCData(struct ATCData data) {
     if (data.currentSpeed != NULL)
         ATC.currentSpeed = data.currentSpeed;
+    ATC.dataEntryButton = data.dataEntryButton;
 }
 
 struct ATCReturnData runATC(struct ATCData data) {
     setATCData(data);
-
     if (internalData.startup == 0)
         return ATCReturn;
     if (internalData.startup == 1)
