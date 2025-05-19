@@ -19,9 +19,23 @@ int main() {
 
     Rectangle startup = {0, ATCPanel.height, 200, 50};
     RaylibAdditions::ButtonClass startupButton = {startup, "Start ATC", 20, GRAY, WHITE, WHITE, 5, 1};
+    Rectangle switchATCType = {0, startupButton.rect.y + startupButton.rect.height, 200, 50};
+    RaylibAdditions::ButtonClass switchATCTypeButton = {switchATCType, "Use ABB ATC", 20, GRAY, WHITE, WHITE, 5, 1};
     Rectangle dataEntry = {642, 40, 20, 20};
     RaylibAdditions::ButtonClass dataEntryButton = {dataEntry, "", 20, BLANK, BLANK, BLANK, 0, 1};
+    
+    RaylibAdditions::SpeedometerClass speedometer = {{200, ATCPanel.height, 300, 300}, 0, 200, 160, 380, 21, "km/h", WHITE, YELLOW};
+    Rectangle speedButtonRect = {200, 300, 50, 50};
+    RaylibAdditions::ButtonClass speedRemove = {speedButtonRect, "-10", 20, GRAY, WHITE, WHITE, 5, 1};
+    speedButtonRect.x += 300 - 50;
+    RaylibAdditions::ButtonClass speedAdd = {speedButtonRect, "+10", 20, GRAY, WHITE, WHITE, 5, 1};
 
+    RaylibAdditions::SpeedometerClass brakePressure = {{500, ATCPanel.height, 300, 300}, 0, 10, 160, 380, 11, "kPa", WHITE, RED};
+    Rectangle brakePressureButtonRect = {500, 300, 50, 50};
+    RaylibAdditions::ButtonClass brakePressureRemove = {brakePressureButtonRect, "-0,5", 20, GRAY, WHITE, WHITE, 5, 1};
+    brakePressureButtonRect.x += 300 - 50;
+    RaylibAdditions::ButtonClass brakePressureAdd = {brakePressureButtonRect, "+0,5", 20, GRAY, WHITE, WHITE, 5, 1};
+    
     ATCReturnData returnedData;
     ATCData data = {};
 
@@ -31,10 +45,29 @@ int main() {
         DrawTexture(ATCPanel, 0, 0, WHITE);
         RaylibAdditions::drawButton(&startupButton);
         RaylibAdditions::updateButtonstate(&startupButton);
-        if (startupButton.state == 2)
-            toggleATC(1);
+        if (startupButton.state == 2) {
+            if (returnedData.ATCStatus == 1)
+                toggleATC(0);
+            if (returnedData.ATCStatus == 0)
+                toggleATC(1);
+        }
 
-        RaylibAdditions::updateButtonstate(&dataEntryButton);
+        if (returnedData.ATCStatus == 1)
+            startupButton.text = "Turn off ATC";
+        if (returnedData.ATCStatus == 0)
+            startupButton.text = "Turn on ATC";
+
+        RaylibAdditions::drawButton(&switchATCTypeButton);
+        RaylibAdditions::updateButtonstate(&switchATCTypeButton);
+        if (switchATCTypeButton.state == 2) {
+            toggleSystemType(!getSystemType());
+            if (getSystemType())
+                switchATCTypeButton.text = "Use SRT ATC";
+            if (!getSystemType())
+                switchATCTypeButton.text = "Use ABB ATC";
+        }
+
+        RaylibAdditions::updateButtonstate(&dataEntryButton, true);
         if (dataEntryButton.state == 2)
             data.dataEntryButton = true;
         else
@@ -77,6 +110,29 @@ int main() {
         DrawText(std::string("Data entry lamp = " + std::to_string(returnedData.dataEntryLamp)).c_str(), 1050, 165, 10, WHITE);
         DrawText(std::string("Small error = " + std::to_string(returnedData.smallError)).c_str(), 1050, 180, 10, WHITE);
 
+        speedometer.drawSpeedometer();
+        brakePressure.drawSpeedometer();
+        brakePressure.drawNeedle({255, 4, 20, 255}, 3.0f, 0.5);
+
+        RaylibAdditions::drawButton(&speedAdd);
+        RaylibAdditions::drawButton(&speedRemove);
+        RaylibAdditions::updateButtonstate(&speedAdd);
+        RaylibAdditions::updateButtonstate(&speedRemove);
+
+        if (speedAdd.state == 2)
+            speedometer.value += 10;
+        if (speedRemove.state == 2)
+            speedometer.value -= 10;
+
+        RaylibAdditions::drawButton(&brakePressureAdd);
+        RaylibAdditions::drawButton(&brakePressureRemove);
+        RaylibAdditions::updateButtonstate(&brakePressureAdd);
+        RaylibAdditions::updateButtonstate(&brakePressureRemove);
+
+        if (brakePressureRemove.state == 2)
+            brakePressure.value -= 0.5;
+        if (brakePressureAdd.state == 2)
+            brakePressure.value += 0.5;
 
         EndDrawing();
     }

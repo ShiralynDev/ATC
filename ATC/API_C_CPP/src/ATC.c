@@ -24,16 +24,25 @@ void setATCData(struct ATCData data) {
 
 struct ATCReturnData runATC(struct ATCData data) {
     setATCData(data);
-    if (internalData.startup == 0)
+    if (internalData.startup == 0) { // This gets skipped when started cus internalData.startup == 2 at that point
+        ATCReturn.ATCStatus = 0;
         return ATCReturn;
+    }
     if (internalData.startup == 1)
         startupSequence();
 
     return ATCReturn;
 }
 
-
 void toggleATC(int on) {
     if (on >= 0 && on <= 2)
         internalData.startup = on;
+}
+
+void toggleSystemType(bool useABB) {
+    internalData.ABBVersion = useABB;
+}
+
+bool getSystemType() {
+    return internalData.ABBVersion;
 }

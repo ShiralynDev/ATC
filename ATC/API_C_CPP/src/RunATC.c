@@ -2,36 +2,77 @@
 #include "ATCData.h"
 #include <time.h>
 #include <stdio.h>
+#include "ATCInternalFunctions.h"
 
-struct ATCReturnData startupSequence() {
-    time_t seconds = time(NULL);
-    if (internalData.seconds == NULL || internalData.seconds == 0) {
-        internalData.seconds = seconds;
+long long getCurrentTimeMS() {
+    struct timespec ts;
+    timespec_get(&ts, TIME_UTC);
+    return (long long)ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
+}
+
+void startupSequence() {
+    int startupTime = 0;
+    int ms = getCurrentTimeMS();
+    if (internalData.ms == 0) {
+        internalData.ms = ms;
+    }
+    if (startupTime == 0) {
+        if (internalData.ABBVersion) startupTime = 5000;
+        if (!internalData.ABBVersion) startupTime = 8000;
     }
 
-    ATCReturn.mainIndicator0 = '4';
-    ATCReturn.mainIndicator1 = '0';
-    ATCReturn.mainIndicator2 = '1';
+    if (ms - internalData.ms <= 100) {
+        turnOnAll();
+        ATCReturn.toneF1 = false;
+        ATCReturn.toneF2 = false;
+        return;
+    }
+    turnOffAll();
 
-    if (seconds - internalData.seconds >= 0.5) {
+    if (ms - internalData.ms <= 300) return;
+
+    if (ms - internalData.ms <= 500) {
+        ATCReturn.ATCError = true;
+        ATCReturn.toneF1 = true;
+        return;
+    }
+    ATCReturn.ATCError = false;
+    ATCReturn.toneF1 = false;
+
+    if (internalData.ABBVersion) {
         ATCReturn.mainIndicator0 = '4';
         ATCReturn.mainIndicator1 = '0';
-        ATCReturn.mainIndicator2 = '0';
-    }
-
-    if (seconds - internalData.seconds >= 3) {
-        ATCReturn.mainIndicator0 = '4';
-        ATCReturn.mainIndicator1 = '1';
-        ATCReturn.mainIndicator2 = '0';
-    }
-
-    if (seconds - internalData.seconds >= 4) {
-        ATCReturn.mainIndicator0 = '4';
-        ATCReturn.mainIndicator1 = '1';
         ATCReturn.mainIndicator2 = '1';
+
+        if (ms - internalData.ms >= 700) {
+            ATCReturn.mainIndicator0 = '4';
+            ATCReturn.mainIndicator1 = '0';
+            ATCReturn.mainIndicator2 = '0';
+        }
+
+        if (ms - internalData.ms >= 3000) {
+            ATCReturn.mainIndicator0 = '4';
+            ATCReturn.mainIndicator1 = '1';
+            ATCReturn.mainIndicator2 = '0';
+        }
+
+        if (ms - internalData.ms >= 4000) {
+            ATCReturn.mainIndicator0 = '4';
+            ATCReturn.mainIndicator1 = '1';
+            ATCReturn.mainIndicator2 = '1';
+        }
+    } else {
+        ATCReturn.mainIndicator1 = '0';
+
+        if (ms - internalData.ms >= 1000) ATCReturn.mainIndicator1 = '1';
+        if (ms - internalData.ms >= 1500) ATCReturn.mainIndicator1 = '2';
+        if (ms - internalData.ms >= 1600) ATCReturn.mainIndicator1 = '3';
+        if (ms - internalData.ms >= 2300) ATCReturn.mainIndicator1 = '4';
+        if (ms - internalData.ms >= 3000) ATCReturn.mainIndicator1 = '5';
+        if (ms - internalData.ms >= 7000) ATCReturn.mainIndicator1 = '6';
     }
 
-    if (seconds - internalData.seconds >= 5) {
+    if (ms - internalData.ms >= startupTime) {
         ATCReturn.mainIndicator0 = ' ';
         ATCReturn.mainIndicator1 = ' ';
         ATCReturn.mainIndicator2 = ' ';
@@ -40,48 +81,16 @@ struct ATCReturnData startupSequence() {
         ATCReturn.toneF2 = true;
         if (ATC.dataEntryButton) {
             internalData.dataEntryButtonPressed = true;
-            // make a function to turn on/off all
+            turnOnAll();
             ATCReturn.ATCError = false;
             ATCReturn.toneF1 = false;
-            ATCReturn.shuntingLamp = true;
-            ATCReturn.preIndicator0 = '8';
-            ATCReturn.preIndicator1 = '8';
-            ATCReturn.preIndicator2 = '8';
-            ATCReturn.BaliseError = true;
-            ATCReturn.speeding = true;
-            ATCReturn.mainIndicator0 = '8';
-            ATCReturn.mainIndicator1 = '8';
-            ATCReturn.mainIndicator2 = '8';
-            ATCReturn.releaseLamp = true;
-            ATCReturn.increaseLamp = true;
-            ATCReturn.dataEntryLamp = true;
-            ATCReturn.smallError = true;
         }
         if (!ATC.dataEntryButton && internalData.dataEntryButtonPressed) {
-            // make a function to turn on/off all
-            ATCReturn.ATCError = false;
-            ATCReturn.toneF1 = false;
-            ATCReturn.toneF2 = false;
-            ATCReturn.shuntingLamp = false;
-            ATCReturn.preIndicator0 = ' ';
-            ATCReturn.preIndicator1 = ' ';
-            ATCReturn.preIndicator2 = ' ';
-            ATCReturn.BaliseError = false;
-            ATCReturn.speeding = false;
-            ATCReturn.mainIndicator0 = ' ';
-            ATCReturn.mainIndicator1 = ' ';
-            ATCReturn.mainIndicator2 = ' ';
-            ATCReturn.releaseLamp = false;
-            ATCReturn.increaseLamp = false;
-            ATCReturn.dataEntryLamp = false;
-            ATCReturn.smallError = false;
-
+            turnOffAll();
             ATCReturn.ATCStatus = 1;
             internalData.startup = 2;
-            internalData.seconds = 0;
+            internalData.ms = 0;
             internalData.dataEntryButtonPressed = false;
         }
     }
-
-    return ATCReturn;
 }

@@ -1,1 +1,1 @@
-struct ATCReturnData startupSequence();
+void startupSequence();
