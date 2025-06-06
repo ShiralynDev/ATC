@@ -30,6 +30,11 @@ int main() {
     speedButtonRect.x += 300 - 50;
     RaylibAdditions::ButtonClass speedAdd = {speedButtonRect, "+10", 20, GRAY, WHITE, WHITE, 5, 1};
 
+    Rectangle speedButtonRectSmall = {250, 300, 50, 50};
+    RaylibAdditions::ButtonClass speedRemoveSmall = {speedButtonRectSmall, "-1", 20, GRAY, WHITE, WHITE, 5, 1};
+    speedButtonRectSmall.x += 200 - 50;
+    RaylibAdditions::ButtonClass speedAddSmall = {speedButtonRectSmall, "+1", 20, GRAY, WHITE, WHITE, 5, 1};
+
     RaylibAdditions::SpeedometerClass brakePressure = {{500, ATCPanel.height, 300, 300}, 0, 10, 160, 380, 11, "kPa", WHITE, RED};
     Rectangle brakePressureButtonRect = {500, 300, 50, 50};
     RaylibAdditions::ButtonClass brakePressureRemove = {brakePressureButtonRect, "-0,5", 20, GRAY, WHITE, WHITE, 5, 1};
@@ -119,19 +124,28 @@ int main() {
         RaylibAdditions::updateButtonstate(&speedAdd);
         RaylibAdditions::updateButtonstate(&speedRemove);
 
-        if (speedAdd.state == 2)
+        RaylibAdditions::drawButton(&speedAddSmall);
+        RaylibAdditions::drawButton(&speedRemoveSmall);
+        RaylibAdditions::updateButtonstate(&speedAddSmall);
+        RaylibAdditions::updateButtonstate(&speedRemoveSmall);
+
+        if (speedAdd.state == 2 && speedometer.value + 10 <= 200)
             speedometer.value += 10;
-        if (speedRemove.state == 2)
+        if (speedRemove.state == 2 && speedometer.value - 10 >= 0)
             speedometer.value -= 10;
+        if (speedAddSmall.state == 2 && speedometer.value + 1 <= 200)
+            speedometer.value += 1;
+        if (speedRemoveSmall.state == 2 && speedometer.value - 1 >= 0)
+            speedometer.value -= 1;
 
         RaylibAdditions::drawButton(&brakePressureAdd);
         RaylibAdditions::drawButton(&brakePressureRemove);
         RaylibAdditions::updateButtonstate(&brakePressureAdd);
         RaylibAdditions::updateButtonstate(&brakePressureRemove);
 
-        if (brakePressureRemove.state == 2)
+        if (brakePressureRemove.state == 2 && brakePressure.value - 0.5 >= 0)
             brakePressure.value -= 0.5;
-        if (brakePressureAdd.state == 2)
+        if (brakePressureAdd.state == 2 && brakePressure.value + 0.5 <= 10)
             brakePressure.value += 0.5;
 
         EndDrawing();
