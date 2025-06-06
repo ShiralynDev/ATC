@@ -17,14 +17,14 @@ int main() {
     Rectangle preInd = {61, 28, 59, 24};
     Rectangle mainInd = {234, 23, 75, 30};
 
-    Rectangle startup = {0, ATCPanel.height, 200, 50};
+    Rectangle startup = {0, float(ATCPanel.height), 200, 50};
     RaylibAdditions::ButtonClass startupButton = {startup, "Start ATC", 20, GRAY, WHITE, WHITE, 5, 1};
     Rectangle switchATCType = {0, startupButton.rect.y + startupButton.rect.height, 200, 50};
     RaylibAdditions::ButtonClass switchATCTypeButton = {switchATCType, "Use ABB ATC", 20, GRAY, WHITE, WHITE, 5, 1};
     Rectangle dataEntry = {642, 40, 20, 20};
     RaylibAdditions::ButtonClass dataEntryButton = {dataEntry, "", 20, BLANK, BLANK, BLANK, 0, 1};
     
-    RaylibAdditions::SpeedometerClass speedometer = {{200, ATCPanel.height, 300, 300}, 0, 200, 160, 380, 21, "km/h", WHITE, YELLOW};
+    RaylibAdditions::SpeedometerClass speedometer = {{200, float(ATCPanel.height), 300, 300}, 0, 200, 160, 380, 21, "km/h", WHITE, YELLOW};
     Rectangle speedButtonRect = {200, 300, 50, 50};
     RaylibAdditions::ButtonClass speedRemove = {speedButtonRect, "-10", 20, GRAY, WHITE, WHITE, 5, 1};
     speedButtonRect.x += 300 - 50;
@@ -35,7 +35,7 @@ int main() {
     speedButtonRectSmall.x += 200 - 50;
     RaylibAdditions::ButtonClass speedAddSmall = {speedButtonRectSmall, "+1", 20, GRAY, WHITE, WHITE, 5, 1};
 
-    RaylibAdditions::SpeedometerClass brakePressure = {{500, ATCPanel.height, 300, 300}, 0, 10, 160, 380, 11, "kPa", WHITE, RED};
+    RaylibAdditions::SpeedometerClass brakePressure = {{500, float(ATCPanel.height), 300, 300}, 0, 10, 160, 380, 11, "kPa", WHITE, RED};
     Rectangle brakePressureButtonRect = {500, 300, 50, 50};
     RaylibAdditions::ButtonClass brakePressureRemove = {brakePressureButtonRect, "-0,5", 20, GRAY, WHITE, WHITE, 5, 1};
     brakePressureButtonRect.x += 300 - 50;
