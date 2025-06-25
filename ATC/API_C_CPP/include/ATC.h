@@ -29,15 +29,19 @@ the developer want to set the data in their functions for pressing a button ect
 */
 
 struct internalATCData {
-	int startup; // 0 = off, 1 = startup, 2 = running
+	int startup; // 0 = off, 1 = startup, 2 = running/data input, 3 = running, data inputed
 	int ms;
 	bool dataEntryButtonPressed;
 	bool ABBVersion; // SRT/ATSS/Ansaldo on false, ABB on true
+	bool achived; // Used as a general varible to save data
+	bool achived1; // Used as a general varible to save data
+	bool achived2; // Used as a general varible to save data
 };
 
 struct ATCData {
 	int currentSpeed;
 	bool dataEntryButton;
+	float brakePressure;
 };
 
 struct ATCReturnData {
@@ -58,10 +62,12 @@ struct ATCReturnData {
 	bool increaseLamp;
 	bool dataEntryLamp;
 	bool smallError;
+	float requestedBrakePressure;
 };
 
 int thisReturnsOne();
 
+void initATC();
 void setATCData(struct ATCData data); // Updates the ATC's data with the inputed data, will not update to null values
 struct ATCReturnData runATC(struct ATCData data); // The function to process ATC data (preferably ran on another thread)
 void toggleATC(int on); // Toggle startup, 1 = startup/started, 0 = off/turn off, 2 = skip startup/started

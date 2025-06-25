@@ -1,3 +1,5 @@
+#pragma once
+
 void turnOffAll() {
     ATCReturn.ATCError = false;
     ATCReturn.toneF1 = false;

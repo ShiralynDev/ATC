@@ -8,6 +8,9 @@ int main() {
 
     InitWindow(1500, 400, "ATC Simulator");
     SetTargetFPS(60);
+    SetWindowMonitor(0);
+
+    int lastTime = GetTime();
 
     InitAudioDevice();
     Sound ATC1 = LoadSound("../res/audio/ATC1.wav");
@@ -40,9 +43,14 @@ int main() {
     RaylibAdditions::ButtonClass brakePressureRemove = {brakePressureButtonRect, "-0,5", 20, GRAY, WHITE, WHITE, 5, 1};
     brakePressureButtonRect.x += 300 - 50;
     RaylibAdditions::ButtonClass brakePressureAdd = {brakePressureButtonRect, "+0,5", 20, GRAY, WHITE, WHITE, 5, 1};
+
+    bool leakBool = false;
+    Rectangle leak = {switchATCType.x, switchATCType.y + switchATCType.height, switchATCType.width, switchATCType.height};
+    RaylibAdditions::ButtonClass leakButton = {leak, "Pressure leak", 20, GRAY, WHITE, WHITE, 5, 1};
     
     ATCReturnData returnedData;
     ATCData data = {};
+    initATC();
 
     while (!WindowShouldClose()) {
         BeginDrawing();
@@ -78,7 +86,18 @@ int main() {
         else
             data.dataEntryButton = false;
 
+        data.brakePressure = brakePressure.value;
+        std::cout << brakePressure.value << std::endl;
         returnedData = runATC(data);
+        if (returnedData.requestedBrakePressure != 0) {
+            if (GetTime() > lastTime && brakePressure.value != returnedData.requestedBrakePressure) {
+                if (brakePressure.value > returnedData.requestedBrakePressure)
+                    brakePressure.value -= 0.05;
+                if (brakePressure.value < returnedData.requestedBrakePressure)
+                    brakePressure.value += 0.05;
+            }
+            lastTime = GetTime();
+        }
 
         if (returnedData.shuntingLamp) DrawCircle(25, 25, 5, RED);
         if (returnedData.ATCError) DrawCircle(150, 40, 5, RED);
@@ -92,10 +111,10 @@ int main() {
         if (returnedData.toneF1 && !IsSoundPlaying(ATC1)) PlaySound(ATC1);
         if (returnedData.toneF2 && !IsSoundPlaying(ATC2)) PlaySound(ATC2);
 
-        int fontSizePreInd = 20;
-        DrawText(std::string(1, returnedData.preIndicator0).c_str(), preInd.x + ((preInd.width/4) * 1) - fontSizePreInd / 2, preInd.y + preInd.height/2 - fontSizePreInd/2, fontSizePreInd, GREEN);
-        DrawText(std::string(1, returnedData.preIndicator1).c_str(), preInd.x + ((preInd.width/4) * 2) - fontSizePreInd / 2, preInd.y + preInd.height/2 - fontSizePreInd/2, fontSizePreInd, GREEN);
-        DrawText(std::string(1, returnedData.preIndicator2).c_str(), preInd.x + ((preInd.width/4) * 3) - fontSizePreInd / 2, preInd.y + preInd.height/2 - fontSizePreInd/2, fontSizePreInd, GREEN);
+        int fontSizePreInd = 15;
+        DrawText(std::string(1, returnedData.preIndicator0).c_str(), preInd.x + ((preInd.width/4) * 1) - fontSizePreInd / 2, preInd.y + preInd.height/2 - fontSizePreInd/2, fontSizePreInd, YELLOW);
+        DrawText(std::string(1, returnedData.preIndicator1).c_str(), preInd.x + ((preInd.width/4) * 2) - fontSizePreInd / 2, preInd.y + preInd.height/2 - fontSizePreInd/2, fontSizePreInd, YELLOW);
+        DrawText(std::string(1, returnedData.preIndicator2).c_str(), preInd.x + ((preInd.width/4) * 3) - fontSizePreInd / 2, preInd.y + preInd.height/2 - fontSizePreInd/2, fontSizePreInd, YELLOW);
         int fontSizeMainInd = 20;
         DrawText(std::string(1, returnedData.mainIndicator0).c_str(), mainInd.x + ((mainInd.width/4) * 1) - fontSizeMainInd / 2, mainInd.y + mainInd.height/2 - fontSizeMainInd/2, fontSizeMainInd, GREEN);
         DrawText(std::string(1, returnedData.mainIndicator1).c_str(), mainInd.x + ((mainInd.width/4) * 2) - fontSizeMainInd / 2, mainInd.y + mainInd.height/2 - fontSizeMainInd/2, fontSizeMainInd, GREEN);
@@ -114,6 +133,7 @@ int main() {
         DrawText(std::string("Increase lamp = " + std::to_string(returnedData.increaseLamp)).c_str(), 1050, 150, 10, WHITE);
         DrawText(std::string("Data entry lamp = " + std::to_string(returnedData.dataEntryLamp)).c_str(), 1050, 165, 10, WHITE);
         DrawText(std::string("Small error = " + std::to_string(returnedData.smallError)).c_str(), 1050, 180, 10, WHITE);
+        DrawText(std::string("Requested brake pressure = " + std::to_string(returnedData.requestedBrakePressure)).c_str(), 1050, 195, 10, WHITE);
 
         speedometer.drawSpeedometer();
         brakePressure.drawSpeedometer();
@@ -147,6 +167,18 @@ int main() {
             brakePressure.value -= 0.5;
         if (brakePressureAdd.state == 2 && brakePressure.value + 0.5 <= 10)
             brakePressure.value += 0.5;
+
+        RaylibAdditions::drawButton(&leakButton);
+        RaylibAdditions::updateButtonstate(&leakButton);
+
+        if (leakButton.state == 2)
+            leakBool = !leakBool;
+
+        if (leakBool) {
+            if (GetTime() > lastTime && brakePressure.value >= 0.5) // 1 sec or more passed
+                brakePressure.value -= 0.5;
+            lastTime = GetTime();
+        }
 
         EndDrawing();
     }
