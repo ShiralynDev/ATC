@@ -2,6 +2,7 @@
 #include <ATC.h>
 #include <raylib.h>
 #include <RaylibAdditions.hpp>
+#include <unordered_map>
 
 int main() {
     std::cout << "Hello world!";
@@ -47,6 +48,22 @@ int main() {
     bool leakBool = false;
     Rectangle leak = {switchATCType.x, switchATCType.y + switchATCType.height, switchATCType.width, switchATCType.height};
     RaylibAdditions::ButtonClass leakButton = {leak, "Pressure leak", 20, GRAY, WHITE, WHITE, 5, 1};
+
+    std::vector<std::pair<Vector2, int>> thumbWheels = {
+        {{691, 21}, 0}, // STH/V-MAX
+        {{712, 21}, 0},
+
+        {{752, 21}, 0}, // length (100m)
+
+        {{795, 21}, 0}, // tillsättningstid / brake apply time
+        {{817, 21}, 0},
+
+        {{861, 21}, 0}, // redartationstalet / deacelerationnumber (converted by some formula, locos have a guide) (bromsprocent på 76 = 061)
+        {{882, 21}, 0},
+        {{903, 21}, 0},
+
+        {{949, 21}, 0}, // procentuell överskridning / procentual override, X2000 has 30% due to boggies design and tilting 
+    };
     
     ATCReturnData returnedData;
     ATCData data = {};
@@ -97,6 +114,24 @@ int main() {
                     brakePressure.value += 0.05;
             }
             lastTime = GetTime();
+        }
+
+        for (auto& thumbWheel : thumbWheels) {
+            Vector2 pos = thumbWheel.first;
+            int& value = thumbWheel.second;
+
+            Rectangle wheelRect = {pos.x, pos.y, 20, 30};
+            DrawText(std::to_string(value).c_str(), pos.x + 5, pos.y + 5, 20, WHITE);
+            if (CheckCollisionPointRec(GetMousePosition(), wheelRect)) {
+                int mouseWheel = GetMouseWheelMove();
+                if (mouseWheel > 0) {
+                    value++;
+                    if (value > 9) value = 0;
+                } else if (mouseWheel < 0) {
+                    value--;
+                    if (value < 0) value = 9;
+                }
+            }
         }
 
         if (returnedData.shuntingLamp) DrawCircle(25, 25, 5, RED);
