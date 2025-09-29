@@ -36,6 +36,8 @@ struct internalATCData {
 	bool achived; // Used as a general varible to save data
 	bool achived1; // Used as a general varible to save data
 	bool achived2; // Used as a general varible to save data
+	int vmax; // in km/h
+	int length; // in x * 10²m 100m = 1, 900m = 9;
 };
 
 struct ATCData {
@@ -66,6 +68,7 @@ struct ATCReturnData {
 };
 
 int thisReturnsOne();
+long long getCurrentTimeMS();
 
 void initATC();
 void setATCData(struct ATCData data); // Updates the ATC's data with the inputed data, will not update to null values

@@ -15,6 +15,12 @@ struct internalATCData internalData = { 0 };
 struct ATCData ATC = { 0 };
 struct ATCReturnData ATCReturn = { 0 };
 
+long long getCurrentTimeMS() {
+    struct timespec ts;
+    timespec_get(&ts, TIME_UTC);
+    return (long long)ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
+}
+
 int thisReturnsOne() {
     return 1;
 }

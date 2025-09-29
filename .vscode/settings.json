@@ -69,7 +69,8 @@
         "condition_variable": "cpp",
         "source_location": "cpp",
         "mutex": "cpp",
-        "cfenv": "cpp"
+        "cfenv": "cpp",
+        "atcstartup.h": "c"
     },
     "cmake.sourceDirectory": "/home/sparkles/Coding/ATC/Examples/C++"
 }

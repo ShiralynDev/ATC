@@ -1,15 +1,8 @@
 #include "ATCStartup.h"
 #include "ATCData.h"
-#include <time.h>
 #include <stdio.h>
 #include <math.h>
 #include "ATCInternalFunctions.h"
-
-long long getCurrentTimeMS() {
-    struct timespec ts;
-    timespec_get(&ts, TIME_UTC);
-    return (long long)ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
-}
 
 bool floatCompare(float a, float b) {
     return fabsf(a - b) < 0.1;
