@@ -10,7 +10,7 @@ void dataInputSequence() {
     }
 
     if (ms - internalData.ms >= 500) {
-        ATCReturn.releaseLamp = !ATCReturn.increaseLamp;
+        ATCReturn.increaseLamp = !ATCReturn.increaseLamp;
         ATCReturn.dataEntryLamp = !ATCReturn.dataEntryLamp;
         internalData.ms = ms;
     }
