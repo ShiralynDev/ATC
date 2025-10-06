@@ -25,6 +25,15 @@ int main() {
     RaylibAdditions::ButtonClass startupButton = {startup, "Start ATC", 20, GRAY, WHITE, WHITE, 5, 1};
     Rectangle switchATCType = {0, startupButton.rect.y + startupButton.rect.height, 200, 50};
     RaylibAdditions::ButtonClass switchATCTypeButton = {switchATCType, "Use ABB ATC", 20, GRAY, WHITE, WHITE, 5, 1};
+
+    Rectangle shunting = {17, 38, 18, 18};
+    RaylibAdditions::ButtonClass shuntingButton = {shunting, "", 20, BLANK, BLANK, BLANK, 0, 1};
+    Rectangle release = {333, 39, 18, 18};
+    RaylibAdditions::ButtonClass releaseButton = {release, "", 20, BLANK, BLANK, BLANK, 0, 1};
+    Rectangle increase = {384, 39, 18, 18};
+    RaylibAdditions::ButtonClass increaseButton = {increase, "", 20, BLANK, BLANK, BLANK, 0, 1};
+    Rectangle stopPassage = {484, 39, 18, 18};
+    RaylibAdditions::ButtonClass stopPassageButton = {stopPassage, "", 20, BLANK, BLANK, BLANK, 0, 1};
     Rectangle dataEntry = {642, 40, 20, 20};
     RaylibAdditions::ButtonClass dataEntryButton = {dataEntry, "", 20, BLANK, BLANK, BLANK, 0, 1};
     
@@ -97,11 +106,16 @@ int main() {
                 switchATCTypeButton.text = "Use ABB ATC";
         }
 
-        RaylibAdditions::updateButtonstate(&dataEntryButton, true);
-        if (dataEntryButton.state == 2)
-            data.dataEntryButton = true;
-        else
-            data.dataEntryButton = false;
+        shuntingButton.updateState();
+        data.shuntingButton = (shuntingButton.state == 2);
+        releaseButton.updateState();
+        data.releaseButton = (releaseButton.state == 2);
+        increaseButton.updateState();
+        data.increaseButton = (increaseButton.state == 2);
+        stopPassageButton.updateState();
+        data.stopPassageButton = (stopPassageButton.state == 2);
+        dataEntryButton.updateState();
+        data.dataEntryButton = (dataEntryButton.state == 2);
 
         data.brakePressure = brakePressure.value;
         std::cout << brakePressure.value << std::endl;
@@ -116,6 +130,7 @@ int main() {
             lastTime = GetTime();
         }
 
+        int i = 0;
         for (auto& thumbWheel : thumbWheels) {
             Vector2 pos = thumbWheel.first;
             int& value = thumbWheel.second;
@@ -132,6 +147,49 @@ int main() {
                     if (value < 0) value = 9;
                 }
             }
+
+            switch (i) { // stupid
+            case 0:
+                data.STHDial1 = value;
+                break;
+            
+            case 1:
+                data.STHDial2 = value;
+                break;
+
+            case 2:
+                data.lengthDial = value;
+                break;
+
+            case 3:
+                data.applyTimeDial1 = value;
+                break;
+
+            case 4:
+                data.applyTimeDial2 = value;
+                break;
+                
+            case 5:
+                data.retardationDial1 = value;
+                break;
+
+            case 6:
+                data.retardationDial2 = value;
+                break;
+            
+            case 7:
+                data.retardationDial3 = value;
+                break;
+
+            case 8:
+                data.overrideDial = value;
+                break;
+
+            default:
+                break;
+            }
+
+            i++;
         }
 
         if (returnedData.shuntingLamp) DrawCircle(25, 25, 5, RED);
@@ -169,6 +227,7 @@ int main() {
         DrawText(std::string("Data entry lamp = " + std::to_string(returnedData.dataEntryLamp)).c_str(), 1050, 165, 10, WHITE);
         DrawText(std::string("Small error = " + std::to_string(returnedData.smallError)).c_str(), 1050, 180, 10, WHITE);
         DrawText(std::string("Requested brake pressure = " + std::to_string(returnedData.requestedBrakePressure)).c_str(), 1050, 195, 10, WHITE);
+        DrawText(std::string("Data entry button = " + std::to_string(data.dataEntryButton)).c_str(), 1050, 210, 10, WHITE);
 
         speedometer.drawSpeedometer();
         brakePressure.drawSpeedometer();

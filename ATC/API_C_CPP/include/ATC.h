@@ -36,14 +36,31 @@ struct internalATCData {
 	bool achived; // Used as a general varible to save data
 	bool achived1; // Used as a general varible to save data
 	bool achived2; // Used as a general varible to save data
+	bool failed;
 	int vmax; // in km/h
 	int length; // in x * 10²m 100m = 1, 900m = 9;
 };
 
 struct ATCData {
 	int currentSpeed;
+
+	bool shuntingButton;
+	bool releaseButton;
+	bool increaseButton;
+	bool stopPassageButton;
 	bool dataEntryButton;
+
 	float brakePressure;
+
+	int STHDial1; // *2 of pos for simulation of positions between for error;
+	int STHDial2; // *2 of pos for simulation of positions between for error;
+	int lengthDial; // *2 of pos for simulation of positions between for error;
+	int applyTimeDial1; // *2 of pos for simulation of positions between for error;
+	int applyTimeDial2; // *2 of pos for simulation of positions between for error;
+	int retardationDial1; // *2 of pos for simulation of positions between for error;
+	int retardationDial2; // *2 of pos for simulation of positions between for error;
+	int retardationDial3; // *2 of pos for simulation of positions between for error;
+	int overrideDial; // *2 of pos for simulation of positions between for error;
 };
 
 struct ATCReturnData {

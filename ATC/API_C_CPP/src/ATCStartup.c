@@ -15,22 +15,6 @@ void startupSequence() { // Rewrite for better "stages" system and better times 
     Preind 01 MainInd 0   2 cabs activated
     Preind 02 MainInd 0   No contact with the panel
     Preind 03 MainInd 0   No contact with the "manöverenheten"
-    Preind 11 MainInd 0   "thumb wheel" Vmax, right, wrong/wrongly
-    Preind 12 MainInd 0   "thumb wheel" Vmax, left, wrong/wrongly
-    Preind 13 MainInd 0   "thumb wheel" train length, wrong/wrongly
-
-    // TRANSLATE 14-19
-    14 0 Tumhjul Retardation, höger felaktigt
-    15 0 Tumhjul Retardation, mitten felaktigt
-    16 0 Tumhjul Retardation, vänster felaktigt
-    17 0 Tumhjul Bromstillsättningstid, höger felaktigt
-    18 0 Tumhjul Bromstillsättningstid, vänster 
-
-    32 0 Button Stop passage pressed
-    41 0 Button Input pressed
-    42 0 Button Shunting pressed
-    43 0 Button Increase pressed
-    44 0 Button Release pressed
 
     // translate
        1 Hastighetsmätarkonstanter
@@ -58,6 +42,19 @@ void startupSequence() { // Rewrite for better "stages" system and better times 
     01 5 Trycksänkningen < 0,25 bar
     06 5 Efter lossning har trycket ej stigit minst 0,12 bar
 
+    11 0   "thumb wheel" Vmax, right, wrong/wrongly
+    12 0   "thumb wheel" Vmax, left, wrong/wrongly
+    13 0   "thumb wheel" train length, wrong/wrongly
+    14 0 Tumhjul Retardation, höger felaktigt
+    15 0 Tumhjul Retardation, mitten felaktigt
+    16 0 Tumhjul Retardation, vänster felaktigt
+    17 0 Tumhjul Bromstillsättningstid, höger felaktigt
+    18 0 Tumhjul Bromstillsättningstid, vänster 
+    32 0 Button Stop passage pressed
+    41 0 Button Input pressed
+    42 0 Button Shunting pressed
+    43 0 Button Increase pressed
+    44 0 Button Release pressed
     */
    
     ATCReturn.ATCStatus = 1;
@@ -121,6 +118,92 @@ void startupSequence() { // Rewrite for better "stages" system and better times 
         if (ms - internalData.ms >= 2300) ATCReturn.mainIndicator1 = '4';
         if (ms - internalData.ms >= 3000) ATCReturn.mainIndicator1 = '5';
 
+        if (ATC.STHDial2 % 2) { // move to error check function or something
+            internalData.failed = true;
+            ATCReturn.mainIndicator1 = '0';
+            ATCReturn.preIndicator1 = '1';
+            ATCReturn.preIndicator2 = '1';
+        }
+        if (ATC.STHDial1 % 2) {
+            internalData.failed = true;
+            ATCReturn.mainIndicator1 = '0';
+            ATCReturn.preIndicator1 = '1';
+            ATCReturn.preIndicator2 = '2';
+        }
+        if (ATC.lengthDial % 2) {
+            internalData.failed = true;
+            ATCReturn.mainIndicator1 = '0';
+            ATCReturn.preIndicator1 = '1';
+            ATCReturn.preIndicator2 = '3';
+        }
+        if (ATC.retardationDial3 % 2) {
+            internalData.failed = true;
+            ATCReturn.mainIndicator1 = '0';
+            ATCReturn.preIndicator1 = '1';
+            ATCReturn.preIndicator2 = '4';
+        }
+        if (ATC.retardationDial2 % 2) {
+            internalData.failed = true;
+            ATCReturn.mainIndicator1 = '0';
+            ATCReturn.preIndicator1 = '1';
+            ATCReturn.preIndicator2 = '5';
+        }
+        if (ATC.retardationDial1 % 2) {
+            internalData.failed = true;
+            ATCReturn.mainIndicator1 = '0';
+            ATCReturn.preIndicator1 = '1';
+            ATCReturn.preIndicator2 = '6';
+        }
+        if (ATC.applyTimeDial2 % 2) {
+            internalData.failed = true;
+            ATCReturn.mainIndicator1 = '0';
+            ATCReturn.preIndicator1 = '1';
+            ATCReturn.preIndicator2 = '7';
+        }
+        if (ATC.applyTimeDial1 % 2) {
+            internalData.failed = true;
+            ATCReturn.mainIndicator1 = '0';
+            ATCReturn.preIndicator1 = '1';
+            ATCReturn.preIndicator2 = '8';
+        }
+        if (ATC.overrideDial % 2) {
+            internalData.failed = true;
+            ATCReturn.mainIndicator1 = '0';
+            ATCReturn.preIndicator1 = '1';
+            ATCReturn.preIndicator2 = '9';
+        }
+        if (ATC.stopPassageButton) {
+            internalData.failed = true;
+            ATCReturn.mainIndicator1 = '0';
+            ATCReturn.preIndicator1 = '3';
+            ATCReturn.preIndicator2 = '2';
+        }
+        if (ATC.dataEntryButton && !(ms - internalData.ms >= startupTime)) {
+            internalData.failed = true;
+            ATCReturn.mainIndicator1 = '0';
+            ATCReturn.preIndicator1 = '4';
+            ATCReturn.preIndicator2 = '1';
+        }
+        if (ATC.shuntingButton) {
+            internalData.failed = true;
+            ATCReturn.mainIndicator1 = '0';
+            ATCReturn.preIndicator1 = '4';
+            ATCReturn.preIndicator2 = '2';
+        }
+        if (ATC.increaseButton) {
+            internalData.failed = true;
+            ATCReturn.mainIndicator1 = '0';
+            ATCReturn.preIndicator1 = '4';
+            ATCReturn.preIndicator2 = '3';
+        }
+        if (ATC.releaseButton) {
+            internalData.failed = true;
+            ATCReturn.mainIndicator1 = '0';
+            ATCReturn.preIndicator1 = '4';
+            ATCReturn.preIndicator2 = '4';
+        }
+
+
         if (!internalData.achived)
             ATCReturn.requestedBrakePressure = 5.0f;
 
@@ -138,10 +221,7 @@ void startupSequence() { // Rewrite for better "stages" system and better times 
             internalData.achived2 = true;
         
         if (ms - internalData.ms >= 7000 && !internalData.achived2) { // startup failed
-            ATCReturn.ATCStatus = 0;
-            internalData.startup = 0;
-            internalData.ms = 0;
-            internalData.dataEntryButtonPressed = false;
+            internalData.failed = true;
             if (ATC.brakePressure < 4.12f) { // Failed to increase pressure by 0.12 bar, error code 06 5
                 ATCReturn.preIndicator1 = '0';
                 ATCReturn.preIndicator2 = '6';
@@ -155,6 +235,14 @@ void startupSequence() { // Rewrite for better "stages" system and better times 
         if (ms - internalData.ms >= 7000 && internalData.achived2) { // no fail
             ATCReturn.mainIndicator1 = '6';
             ATCReturn.requestedBrakePressure = 0.0f;
+        }
+
+        if (internalData.failed) {
+            ATCReturn.ATCStatus = 0;
+            internalData.startup = 0;
+            internalData.ms = 0;
+            internalData.dataEntryButtonPressed = false;
+            internalData.failed = false;
         }
     }
 

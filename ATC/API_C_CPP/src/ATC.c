@@ -36,9 +36,7 @@ void initATC() { // Run this before using the ATC
 }
 
 void setATCData(struct ATCData data) {
-    ATC.currentSpeed = data.currentSpeed;
-    ATC.dataEntryButton = data.dataEntryButton;
-    ATC.brakePressure = data.brakePressure;
+    ATC = data;
 }
 
 struct ATCReturnData runATC(struct ATCData data) {

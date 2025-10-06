@@ -8,6 +8,7 @@ target_sources(ATCAPI
         src/ATC.c
         src/ATCStartup.c
         src/ATCDataInput.c
+        src/ATCInternalFunctions.c
 )
 
 target_include_directories(ATCAPI

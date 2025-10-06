@@ -70,7 +70,10 @@
         "source_location": "cpp",
         "mutex": "cpp",
         "cfenv": "cpp",
-        "atcstartup.h": "c"
+        "atcstartup.h": "c",
+        "chrono": "cpp",
+        "__nullptr": "cpp",
+        "__verbose_abort": "cpp"
     },
     "cmake.sourceDirectory": "/home/sparkles/Coding/ATC/Examples/C++"
 }
