@@ -27,15 +27,15 @@ int main() {
     RaylibAdditions::ButtonClass switchATCTypeButton = {switchATCType, "Use ABB ATC", 20, GRAY, WHITE, WHITE, 5, 1};
 
     Rectangle shunting = {17, 38, 18, 18};
-    RaylibAdditions::ButtonClass shuntingButton = {shunting, "", 20, BLANK, BLANK, BLANK, 0, 1};
+    RaylibAdditions::ButtonClass shuntingButton = {shunting, BLANK, BLANK, 0, 1};
     Rectangle release = {333, 39, 18, 18};
-    RaylibAdditions::ButtonClass releaseButton = {release, "", 20, BLANK, BLANK, BLANK, 0, 1};
+    RaylibAdditions::ButtonClass releaseButton = {release, BLANK, BLANK, 0, 1};
     Rectangle increase = {384, 39, 18, 18};
-    RaylibAdditions::ButtonClass increaseButton = {increase, "", 20, BLANK, BLANK, BLANK, 0, 1};
+    RaylibAdditions::ButtonClass increaseButton = {increase, BLANK, BLANK, 0, 1};
     Rectangle stopPassage = {484, 39, 18, 18};
-    RaylibAdditions::ButtonClass stopPassageButton = {stopPassage, "", 20, BLANK, BLANK, BLANK, 0, 1};
+    RaylibAdditions::ButtonClass stopPassageButton = {stopPassage, BLANK, BLANK, 0, 1};
     Rectangle dataEntry = {642, 40, 20, 20};
-    RaylibAdditions::ButtonClass dataEntryButton = {dataEntry, "", 20, BLANK, BLANK, BLANK, 0, 1};
+    RaylibAdditions::ButtonClass dataEntryButton = {dataEntry, BLANK, BLANK, 0, 1};
     
     RaylibAdditions::SpeedometerClass speedometer = {{200, float(ATCPanel.height), 300, 300}, 0, 200, 160, 380, 21, "km/h", WHITE, YELLOW};
     Rectangle speedButtonRect = {200, 300, 50, 50};
@@ -106,16 +106,11 @@ int main() {
                 switchATCTypeButton.text = "Use ABB ATC";
         }
 
-        shuntingButton.updateState();
-        data.shuntingButton = (shuntingButton.state == 2);
-        releaseButton.updateState();
-        data.releaseButton = (releaseButton.state == 2);
-        increaseButton.updateState();
-        data.increaseButton = (increaseButton.state == 2);
-        stopPassageButton.updateState();
-        data.stopPassageButton = (stopPassageButton.state == 2);
-        dataEntryButton.updateState();
-        data.dataEntryButton = (dataEntryButton.state == 2);
+        data.shuntingButton = shuntingButton.updateState();
+        data.releaseButton = releaseButton.updateState();
+        data.increaseButton = increaseButton.updateState();
+        data.stopPassageButton = stopPassageButton.updateState();
+        data.dataEntryButton = dataEntryButton.updateState(true);
 
         data.brakePressure = brakePressure.value;
         std::cout << brakePressure.value << std::endl;
@@ -233,15 +228,10 @@ int main() {
         brakePressure.drawSpeedometer();
         brakePressure.drawNeedle({255, 4, 20, 255}, 3.0f, 0.5);
 
-        RaylibAdditions::drawButton(&speedAdd);
-        RaylibAdditions::drawButton(&speedRemove);
-        RaylibAdditions::updateButtonstate(&speedAdd);
-        RaylibAdditions::updateButtonstate(&speedRemove);
-
-        RaylibAdditions::drawButton(&speedAddSmall);
-        RaylibAdditions::drawButton(&speedRemoveSmall);
-        RaylibAdditions::updateButtonstate(&speedAddSmall);
-        RaylibAdditions::updateButtonstate(&speedRemoveSmall);
+        speedAdd.drawAndUpdate();
+        speedRemove.drawAndUpdate();
+        speedAddSmall.drawAndUpdate();
+        speedRemoveSmall.drawAndUpdate();
 
         if (speedAdd.state == 2 && speedometer.value + 10 <= 200)
             speedometer.value += 10;
@@ -252,19 +242,15 @@ int main() {
         if (speedRemoveSmall.state == 2 && speedometer.value - 1 >= 0)
             speedometer.value -= 1;
 
-        RaylibAdditions::drawButton(&brakePressureAdd);
-        RaylibAdditions::drawButton(&brakePressureRemove);
-        RaylibAdditions::updateButtonstate(&brakePressureAdd);
-        RaylibAdditions::updateButtonstate(&brakePressureRemove);
+        brakePressureAdd.drawAndUpdate();
+        brakePressureRemove.drawAndUpdate();
 
         if (brakePressureRemove.state == 2 && brakePressure.value - 0.5 >= 0)
             brakePressure.value -= 0.5;
         if (brakePressureAdd.state == 2 && brakePressure.value + 0.5 <= 10)
             brakePressure.value += 0.5;
 
-        RaylibAdditions::drawButton(&leakButton);
-        RaylibAdditions::updateButtonstate(&leakButton);
-
+        leakButton.drawAndUpdate();
         if (leakButton.state == 2)
             leakBool = !leakBool;
 
