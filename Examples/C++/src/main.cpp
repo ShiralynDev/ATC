@@ -14,8 +14,8 @@ int main() {
     int lastTime = GetTime();
 
     InitAudioDevice();
-    Sound ATC1 = LoadSound("../res/audio/ATC1.wav");
-    Sound ATC2 = LoadSound("../res/audio/ATC2.wav"); // get better audio
+    Sound ATC1 = LoadSound("../res/audio/f1.wav"); // Better f1 tone // 1. f1 med 2,5 kHz ± 20 %. f1 aktiveras endast vid ATC-larm (verkligt eller simulerat) och är helt oberoende av om ATC-systemets matningsdon fungerar eller inte. Ljudstyrkan hos f1 kan inte regleras.
+    Sound ATC2 = LoadSound("../res/audio/f2.wav"); // f2 med 400 Hz ± 10 % fyrkantvåg. f2 är styrbar från datorerna under normal drift. Den aktiveras dessutom vid ATC-larm och är härvid oberoende av om ATC-systemets matningsdon fungerar eller inte. Ljudstyrkan är reglerbar med en potentiometer på panelen.
 
     Texture2D ATCPanel = LoadTexture("../res/textures/cleanATC.png");
     Rectangle preInd = {61, 28, 59, 24};
@@ -150,39 +150,39 @@ int main() {
 
             switch (i) { // stupid
             case 0:
-                data.STHDial1 = value;
+                data.STHDial1 = value * 2;
                 break;
             
             case 1:
-                data.STHDial2 = value;
+                data.STHDial2 = value * 2;
                 break;
 
             case 2:
-                data.lengthDial = value;
+                data.lengthDial = value * 2;
                 break;
 
             case 3:
-                data.applyTimeDial1 = value;
+                data.applyTimeDial1 = value * 2;
                 break;
 
             case 4:
-                data.applyTimeDial2 = value;
+                data.applyTimeDial2 = value * 2;
                 break;
                 
             case 5:
-                data.retardationDial1 = value;
+                data.retardationDial1 = value * 2;
                 break;
 
             case 6:
-                data.retardationDial2 = value;
+                data.retardationDial2 = value * 2;
                 break;
             
             case 7:
-                data.retardationDial3 = value;
+                data.retardationDial3 = value * 2;
                 break;
 
             case 8:
-                data.overrideDial = value;
+                data.overrideDial = value * 2;
                 break;
 
             default:
