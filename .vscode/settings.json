@@ -73,7 +73,8 @@
         "atcstartup.h": "c",
         "chrono": "cpp",
         "__nullptr": "cpp",
-        "__verbose_abort": "cpp"
+        "__verbose_abort": "cpp",
+        "atcerrors.h": "c"
     },
     "cmake.sourceDirectory": "/home/sparkles/Coding/ATC/Examples/C++"
 }
