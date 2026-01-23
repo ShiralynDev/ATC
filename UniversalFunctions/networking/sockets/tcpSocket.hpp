@@ -19,7 +19,6 @@ namespace Networking {
         int socketFd;
     public:
         TcpSocket(int SocketDomain = AF_INET, int SocketType = SOCK_STREAM | SOCK_NONBLOCK, int Protocol = 0); // AF_UNIX = local communication, allow other types later
-        TcpSocket(const TcpSocket&) = delete;
         int bind();
         int connect();            
     };
