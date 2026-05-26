@@ -4,3 +4,6 @@
 [submodule "extern/RaylibAdditions"]
 	path = extern/RaylibAdditions
 	url = https://github.com/ShiralynDev/RaylibAdditions.git
+[submodule "extern/ShiraNet"]
+	path = extern/ShiraNet
+	url = https://github.com/ShiralynDev/ShiraNet

@@ -1,12 +1,26 @@
+#include <RaylibAdditions.hpp>
+#include <ShiraNet.hpp>
 #include <iostream>
 #include <raylib.h>
-#include <RaylibAdditions.hpp>
 #include <string.h>
 
-int main() {
-    const std::string resPath = "../../res"; // should be ./ when built for "release" or packaged, also adjust for windows, also use filesystem path for ease of use
+#include "networking.hpp"
 
-    RaylibAdditions::WindowClass window{"ATC_Panel_Extended_Debug", 1024, 500}; // read screen size from config later
+ATCReturnData ATCData;
+
+void getDataThread(ShiraNet::Sockets::TcpSocket &socket) {
+    while (true) { // [taskig] use interval
+        auto newData = ATCNetworking::getATCData(socket);
+        if (newData.has_value()) {
+            ATCData = newData.value();
+        }
+    }
+}
+
+int main() {
+    const std::string resPath = "../../../res"; // should be ./ when built for "release" or packaged, also adjust for windows, also use filesystem path for ease of use
+
+    RaylibAdditions::WindowClass window{"ATC_Panel_Extended_Debug", 1200, 500}; // read screen size from config later
 
     SetTargetFPS(60);
     SetWindowMonitor(0);
@@ -32,7 +46,7 @@ int main() {
     RaylibAdditions::ButtonClass stopPassageButton = {stopPassage, "", 0, BLANK, BLANK, BLANK, 0, 1};
     Rectangle dataEntry = {642, 40, 20, 20};
     RaylibAdditions::ButtonClass dataEntryButton = {dataEntry, "", 0, BLANK, BLANK, BLANK, 0, 1};
-    
+
     RaylibAdditions::SpeedometerClass speedometer = {{0, float(ATCPanelTexture.height), 300, 300}, 0, 200, 160, 380, 21, "km/h", WHITE, YELLOW};
     Rectangle speedButtonRect = {0, 300, 50, 50};
     RaylibAdditions::ButtonClass speedRemove = {speedButtonRect, "-10", 20, GRAY, WHITE, WHITE, 5, 1};
@@ -49,6 +63,9 @@ int main() {
     brakePressureButtonRect.x += 300 - 50;
     RaylibAdditions::ButtonClass brakePressureAdd = {brakePressureButtonRect, "+0,5", 20, GRAY, WHITE, WHITE, 5, 1};
 
+    Rectangle toggleATCRect = {0, 350, 200, 50};
+    RaylibAdditions::ButtonClass toggleATCButton = {toggleATCRect, "Toggle ATC", 20, GRAY, WHITE, WHITE, 5, 1};
+
     std::vector<std::pair<Vector2, int>> thumbWheels = {
         {{691, 21}, 0}, // STH/V-MAX
         {{712, 21}, 0},
@@ -62,12 +79,59 @@ int main() {
         {{882, 21}, 0},
         {{903, 21}, 0},
 
-        {{949, 21}, 0}, // procentuell överskridning / procentual override, X2000 has 30% due to boggies design and tilting 
+        {{949, 21}, 0}, // procentuell överskridning / procentual override, X2000 has 30% due to boggies design and tilting
     };
 
-    while(!WindowShouldClose()) {
-        //update
-        // this button code sucks, fix it
+    ShiraNet::Sockets::TcpSocket socket(AF_INET);
+    socket.connect("localhost", 1337);
+
+    std::thread getATCDataThread{getDataThread, std::ref(socket)};
+
+    while (!WindowShouldClose()) {
+        // ATC values
+        int y = 0;
+        int fontSize = 10;
+        int lineHeight = 14; // slightly bigger than font size for spacing
+        DrawText(("ATCStatus = " + std::to_string(ATCData.ATCStatus)).c_str(), 1024, y, fontSize, WHITE);
+        y += lineHeight;
+        DrawText(("toneF1 = " + std::to_string(ATCData.toneF1)).c_str(), 1024, y, fontSize, WHITE);
+        y += lineHeight;
+        DrawText(("toneF2 = " + std::to_string(ATCData.toneF2)).c_str(), 1024, y, fontSize, WHITE);
+        y += lineHeight;
+        DrawText(("shuntingLamp = " + std::to_string(ATCData.shuntingLamp)).c_str(), 1024, y, fontSize, WHITE);
+        y += lineHeight;
+        DrawText(("ATCStatus = " + std::to_string(ATCData.ATCStatus)).c_str(), 1024, y, fontSize, WHITE);
+        y += lineHeight;
+        DrawText(("preIndicator0 = " + std::string(1, ATCData.preIndicator0)).c_str(), 1024, y, fontSize, WHITE);
+        y += lineHeight;
+        DrawText(("preIndicator1 = " + std::string(1, ATCData.preIndicator1)).c_str(), 1024, y, fontSize, WHITE);
+        y += lineHeight;
+        DrawText(("preIndicator2 = " + std::string(1, ATCData.preIndicator2)).c_str(), 1024, y, fontSize, WHITE);
+        y += lineHeight;
+        DrawText(("ATCError = " + std::to_string(ATCData.ATCError)).c_str(), 1024, y, fontSize, WHITE);
+        y += lineHeight;
+        DrawText(("BaliseError = " + std::to_string(ATCData.BaliseError)).c_str(), 1024, y, fontSize, WHITE);
+        y += lineHeight;
+        DrawText(("speeding = " + std::to_string(ATCData.speeding)).c_str(), 1024, y, fontSize, WHITE);
+        y += lineHeight;
+        DrawText(("mainIndicator0 = " + std::string(1, ATCData.mainIndicator0)).c_str(), 1024, y, fontSize, WHITE);
+        y += lineHeight;
+        DrawText(("mainIndicator1 = " + std::string(1, ATCData.mainIndicator1)).c_str(), 1024, y, fontSize, WHITE);
+        y += lineHeight;
+        DrawText(("mainIndicator2 = " + std::string(1, ATCData.mainIndicator2)).c_str(), 1024, y, fontSize, WHITE);
+        y += lineHeight;
+        DrawText(("releaseLamp = " + std::to_string(ATCData.releaseLamp)).c_str(), 1024, y, fontSize, WHITE);
+        y += lineHeight;
+        DrawText(("increaseLamp = " + std::to_string(ATCData.increaseLamp)).c_str(), 1024, y, fontSize, WHITE);
+        y += lineHeight;
+        DrawText(("dataEntryLamp = " + std::to_string(ATCData.dataEntryLamp)).c_str(), 1024, y, fontSize, WHITE);
+        y += lineHeight;
+        DrawText(("smallError = " + std::to_string(ATCData.smallError)).c_str(), 1024, y, fontSize, WHITE);
+        y += lineHeight;
+        DrawText(("requestedBrakePressure = " + std::to_string(ATCData.requestedBrakePressure)).c_str(), 1024, y, fontSize, WHITE);
+
+        // update
+        //  this button code sucks, fix it
         shuntingButton.updateState();
         releaseButton.updateState();
         increaseButton.updateState();
@@ -79,6 +143,14 @@ int main() {
         speedAddSmall.updateState();
         brakePressureRemove.updateState();
         brakePressureAdd.updateState();
+        toggleATCButton.updateState();
+
+        if (toggleATCButton.state == 2) {
+            if (ATCData.ATCStatus == 0)
+                ATCNetworking::toggleATCPower(1, socket);
+            else
+                ATCNetworking::toggleATCPower(0, socket);
+        }
 
         if (speedRemove.state == 2)
             speedometer.value -= 10;
@@ -107,6 +179,15 @@ int main() {
         speedAddSmall.draw();
         brakePressureRemove.draw();
         brakePressureAdd.draw();
+        toggleATCButton.draw();
+
+        DrawText(std::string(1, ATCData.preIndicator0).c_str(), preInd.x + (preInd.width/3.0)*0, preInd.y + preInd.height/2 - 5, 10, YELLOW);
+        DrawText(std::string(1, ATCData.preIndicator1).c_str(), preInd.x + (preInd.width/3.0)*1, preInd.y + preInd.height/2 - 5, 10, YELLOW);
+        DrawText(std::string(1, ATCData.preIndicator2).c_str(), preInd.x + (preInd.width/3.0)*2, preInd.y + preInd.height/2 - 5, 10, YELLOW);
+
+        DrawText(std::string(1, ATCData.mainIndicator0).c_str(), mainInd.x + (mainInd.width/3.0)*0, mainInd.y + mainInd.height/2 - 10, 20, GREEN);
+        DrawText(std::string(1, ATCData.mainIndicator1).c_str(), mainInd.x + (mainInd.width/3.0)*1, mainInd.y + mainInd.height/2 - 10, 20, GREEN);
+        DrawText(std::string(1, ATCData.mainIndicator2).c_str(), mainInd.x + (mainInd.width/3.0)*2, mainInd.y + mainInd.height/2 - 10, 20, GREEN);
 
         EndDrawing();
     }

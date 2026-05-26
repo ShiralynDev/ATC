@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
 
 project(ATC_Dator)
@@ -14,13 +14,20 @@ endif()
 set(BUILD_SHARED_LIBS ON)
 set(BUILD_EXAMPLES OFF)
 
-file(GLOB SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp)
+add_subdirectory(
+    ${CMAKE_CURRENT_LIST_DIR}/../extern/ShiraNet
+    ${CMAKE_BINARY_DIR}/ShiraNet
+)
+include_directories(../extern/ShiraNet/include) 
+
+file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp)
 file(GLOB_RECURSE UniversalFunctionsSources ${CMAKE_CURRENT_LIST_DIR}/../UniversalFunctions/*.cpp)
 
 set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
 # Create the executable
 add_executable(ATC_Dator ${SOURCES} ${UniversalFunctionsSources})
+target_link_libraries(ATC_Dator PRIVATE ShiraNet)
 
 target_include_directories(ATC_Dator PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/../UniversalFunctions
