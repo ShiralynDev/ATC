@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
 
 project(ATC_Panel_ExDebug)
-set(CMAKE_CXX_STANDARD 20) # Use C++ 20
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Enable Release mode
@@ -40,10 +40,16 @@ file(GLOB SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../UniversalFunctions/networking) 
 file(GLOB ATCNetworkingSources ${CMAKE_CURRENT_LIST_DIR}/../UniversalFunctions/networking/*.cpp)
 
+include_directories(${CMAKE_CURRENT_LIST_DIR}/../UniversalFunctions/drawing) 
+file(GLOB ATCDrawingSources ${CMAKE_CURRENT_LIST_DIR}/../UniversalFunctions/drawing/*.cpp)
+
+include_directories(${CMAKE_CURRENT_LIST_DIR}/../../../ATC_Universal)
+file(GLOB ATCUniversalSources ${CMAKE_CURRENT_LIST_DIR}/../../../ATC_Universal/*.cpp)
+
 set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
 # Create the executable
-add_executable(ATC_Panel_ExDebug ${SOURCES} ${RAYLIB_ADDITIONS_SOURCES} ${ATCNetworkingSources})
+add_executable(ATC_Panel_ExDebug ${SOURCES} ${RAYLIB_ADDITIONS_SOURCES} ${ATCNetworkingSources} ${ATCDrawingSources} ${ATCUniversalSources})
 target_link_libraries(ATC_Panel_ExDebug PRIVATE raylib ShiraNet)
 
 # Apply Release mode specific settings

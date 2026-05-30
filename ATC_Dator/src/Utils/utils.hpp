@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../ATCData.hpp"
+#include "ATCData.hpp"
 
 namespace ATC {
 extern void turnOffAll(ATCReturnData &returnData);

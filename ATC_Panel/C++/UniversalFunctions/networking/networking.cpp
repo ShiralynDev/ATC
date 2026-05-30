@@ -1,6 +1,7 @@
 #include "networking.hpp"
 
 #include <ShiraNet.hpp>
+#include <iostream>
 
 std::optional<ATCReturnData> ATCNetworking::getATCData(ShiraNet::Sockets::TcpSocket &socket) {
     try {
@@ -11,14 +12,18 @@ std::optional<ATCReturnData> ATCNetworking::getATCData(ShiraNet::Sockets::TcpSoc
         message.payloadToDataField(data);
         return data.data;
     } catch (...) {
+        return std::nullopt;
     }
-    return std::nullopt;
 }
 
 void ATCNetworking::toggleATCPower(bool state, ShiraNet::Sockets::TcpSocket &socket) {
-    ShiraNet::NetworkData::DataField<bool> data;
-    data.data = state;
+    try {
+        ShiraNet::NetworkData::DataField<bool> data;
+        data.data = state;
 
-    ShiraNet::NetworkData::Message message(1, data);
-    socket.send(message);
+        ShiraNet::NetworkData::Message message(1, data);
+        socket.send(message);
+    } catch (...) {
+        std::cout << "Failed to send toggelATCPower message\n";
+    }
 }

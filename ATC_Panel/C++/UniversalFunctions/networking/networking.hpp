@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../../ATC_Dator/src/ATCData.hpp"
+#include "ATCData.hpp"
 
 #include <ShiraNet.hpp>
 #include <optional>

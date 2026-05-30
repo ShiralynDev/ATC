@@ -50,8 +50,10 @@ void clientCallback(std::shared_ptr<ShiraNet::Sockets::TcpSocket> client, ShiraN
             std::cout << "sent message\n";
         } catch (const std::exception &e) {
             std::cerr << "Failed to send (std): " << e.what() << std::endl;
+            break;
         } catch (...) {
             std::cerr << "Failed to send: unknown exception\n";
+            break;
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
