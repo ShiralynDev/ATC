@@ -13,7 +13,6 @@ endif()
 
 set(BUILD_SHARED_LIBS ON)
 set(BUILD_EXAMPLES OFF)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Raylib
 set(SUPPORT_X11 ON CACHE BOOL "Use X11 for windowing" FORCE)
@@ -25,10 +24,6 @@ add_subdirectory(
 include_directories(../../../extern/raylib/) 
 
 # ShiraNet
-add_subdirectory(
-    ${CMAKE_CURRENT_LIST_DIR}/../../../extern/ShiraNet
-    ${CMAKE_BINARY_DIR}/ShiraNet
-)
 include_directories(../../../extern/ShiraNet/include) 
 
 # RaylibAdditions
@@ -37,11 +32,7 @@ file(GLOB RAYLIB_ADDITIONS_SOURCES ../../../extern/RaylibAdditions/*.cpp)
 
 file(GLOB SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp)
 
-include_directories(${CMAKE_CURRENT_LIST_DIR}/../UniversalFunctions/networking) 
-file(GLOB ATCNetworkingSources ${CMAKE_CURRENT_LIST_DIR}/../UniversalFunctions/networking/*.cpp)
-
-include_directories(${CMAKE_CURRENT_LIST_DIR}/../UniversalFunctions/drawing) 
-file(GLOB ATCDrawingSources ${CMAKE_CURRENT_LIST_DIR}/../UniversalFunctions/drawing/*.cpp)
+add_subdirectory(../UniversalFunctions UniversalFunctionsBuild)
 
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../../../ATC_Universal)
 file(GLOB ATCUniversalSources ${CMAKE_CURRENT_LIST_DIR}/../../../ATC_Universal/*.cpp)
@@ -50,7 +41,7 @@ set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
 # Create the executable
 add_executable(ATC_Panel_ExDebug ${SOURCES} ${RAYLIB_ADDITIONS_SOURCES} ${ATCNetworkingSources} ${ATCDrawingSources} ${ATCUniversalSources})
-target_link_libraries(ATC_Panel_ExDebug PRIVATE raylib ShiraNet)
+target_link_libraries(ATC_Panel_ExDebug PRIVATE raylib ShiraNet ATCUniversalFunctions)
 
 # Apply Release mode specific settings
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
