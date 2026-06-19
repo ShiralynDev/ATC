@@ -43,6 +43,15 @@ set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 add_executable(ATC_Panel_ExDebug ${SOURCES} ${RAYLIB_ADDITIONS_SOURCES} ${ATCNetworkingSources} ${ATCDrawingSources} ${ATCUniversalSources})
 target_link_libraries(ATC_Panel_ExDebug PRIVATE raylib ShiraNet ATCUniversalFunctions)
 
+add_custom_command(TARGET ATC_Panel_ExDebug POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+            $<TARGET_FILE_DIR:ATC_Panel_ExDebug>/res
+
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_CURRENT_SOURCE_DIR}/../../res
+            $<TARGET_FILE_DIR:ATC_Panel_ExDebug>/res
+)
+
 # Apply Release mode specific settings
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
     # Add optimization flags

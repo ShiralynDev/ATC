@@ -3,6 +3,7 @@
 #include <sstream>
 
 struct internalATCData {
+    bool isCabA = true;
     int startup = 0; // 0 = off, 1 = startup, 2 = running/data input, 3 = running, data inputed
     bool dataEntryButtonPressed = false;
     bool ABBVersion = false; // SRT/ATSS/Ansaldo on false, ABB on true

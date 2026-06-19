@@ -27,3 +27,16 @@ void ATCNetworking::toggleATCPower(bool state, ShiraNet::Sockets::TcpSocket &soc
         std::cout << "Failed to send toggelATCPower message\n";
     }
 }
+
+void ATCNetworking::toggleATCPower(bool state, bool isCabA, ShiraNet::Sockets::TcpSocket &socket) {
+    try {
+        ShiraNet::NetworkData::DataField<std::vector<bool>> data;
+        data.data.push_back(state);
+        data.data.push_back(isCabA);
+
+        ShiraNet::NetworkData::Message message(2, data);
+        socket.send(message);
+    } catch (...) {
+        std::cout << "Failed to send toggelATCPower message\n";
+    }
+}

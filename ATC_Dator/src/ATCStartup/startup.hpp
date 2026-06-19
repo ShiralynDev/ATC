@@ -9,6 +9,6 @@ extern int ms;
 extern void errors(ATCData &data, internalATCData &internalData, ATCReturnData &returnData);
 } // namespace Startup
 
-extern void startupSequence(ATCData &data, internalATCData &internalData, ATCReturnData &returnData);
+extern void startupSequence(ATCData &data, internalATCData &internalData, ATCReturnData &returnData, bool isCabA);
 
 } // namespace ATC

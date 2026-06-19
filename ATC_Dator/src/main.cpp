@@ -1,12 +1,15 @@
 #include <ShiraNet.hpp>
+#include <cstring>
 #include <iostream>
 #include <sys/socket.h>
 #include <thread>
+#include <vector>
 
 #include "ATCStartup/startup.hpp"
 
 struct ClientData {
     bool power = false;
+    bool isCabA = true;
 };
 
 ClientData clientData;
@@ -18,7 +21,14 @@ void togglePowerMessage(ShiraNet::NetworkData::Message &message) {
     message.payloadToDataField(data);
 
     clientData.power = data.data;
-    std::cout << "power is now: " << std::to_string(data.data) << std::endl;
+}
+
+void togglePowerMessageWithCabID(ShiraNet::NetworkData::Message &message) {
+    ShiraNet::NetworkData::DataField<std::vector<bool>> data;
+    message.payloadToDataField(data);
+
+    clientData.power = data.data.at(0);
+    clientData.isCabA = data.data.at(1);
 }
 
 void handleMessage(ShiraNet::NetworkData::Message &message) {
@@ -28,6 +38,10 @@ void handleMessage(ShiraNet::NetworkData::Message &message) {
 
     case 1:
         togglePowerMessage(message);
+        break;
+
+    case 2:
+        togglePowerMessageWithCabID(message);
         break;
 
     default:
@@ -47,7 +61,6 @@ void clientCallback(std::shared_ptr<ShiraNet::Sockets::TcpSocket> client, ShiraN
             ShiraNet::NetworkData::DataField<ATCReturnData> ATCDataField{sizeof(ATCReturnData), atcReturn};
             ShiraNet::NetworkData::Message ATCDataMessage(0, ATCDataField);
             client->send(ATCDataMessage);
-            std::cout << "sent message\n";
         } catch (const std::exception &e) {
             std::cerr << "Failed to send (std): " << e.what() << std::endl;
             break;
@@ -66,17 +79,21 @@ void server(ShiraNet::Servers::TcpServer *server) {
     }
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+    internalATCData atcInternal;
+
+    if (argc == 2 && strcmp(argv[1], "B"))
+        atcInternal.isCabA = false;
+
     ShiraNet::Servers::TcpServer ATCServer(AF_INET, 1337, 10);
     std::thread serverThread(server, &ATCServer);
 
     ATCData atcData;
-    internalATCData atcInternal;
 
     while (true) {
         if (clientData.power || atcInternal.startup == 1) {
             clientData.power = false;
-            ATC::startupSequence(atcData, atcInternal, atcReturn);
+            ATC::startupSequence(atcData, atcInternal, atcReturn, clientData.isCabA);
         }
     }
 }

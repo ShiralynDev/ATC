@@ -42,7 +42,7 @@ class ATCPanelDrawing {
     Rectangle toggleATCRect = {0, 350, 200, 50};
     RaylibAdditions::ButtonClass toggleATCButton = {toggleATCRect, "Toggle ATC", 20, GRAY, WHITE, WHITE, 5, 1};
 
-    ATCPanelDrawing() { ATCPanelTexture = LoadTexture("../../../res/cleanATC.png"); } // should be ./ when built for "release" or packaged, also adjust for windows, also use filesystem path for ease of use
+    ATCPanelDrawing() { ATCPanelTexture = LoadTexture("./res/cleanATC.png"); } // should be ./ when built for "release" or packaged, also adjust for windows, also use filesystem path for ease of use
     void updateButtons(bool debugButtons = false);
     void drawButtons(bool debugButtons = false);
     void drawIndicators(char indicators[6]);

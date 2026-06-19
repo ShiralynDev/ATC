@@ -1,5 +1,6 @@
 #include <RaylibAdditions.hpp>
 #include <ShiraNet.hpp>
+#include <cstring>
 #include <raylib.h>
 #include <iostream>
 
@@ -18,14 +19,18 @@ void getDataThread(ShiraNet::Sockets::TcpSocket &socket) {
     }
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+    bool isCabA = true;
+    if (argc == 2 && strcmp(argv[1], "B"))
+        isCabA = false;
+
     RaylibAdditions::WindowClass window{"ATC_Panel_Extended_Debug", 1200, 500}; // read screen size from config later
 
     SetTargetFPS(60);
     SetWindowMonitor(0);
     SetExitKey(KEY_NULL);
 
-    const std::string resPath = "../../../res";
+    const std::string resPath = "./res";
     InitAudioDevice();
     Sound ATC1 = LoadSound((resPath + "/f1.wav").c_str()); // Better f1 tone // 1. f1 med 2,5 kHz ± 20 %. f1 aktiveras endast vid ATC-larm (verkligt eller simulerat) och är helt oberoende av om ATC-systemets matningsdon fungerar eller inte. Ljudstyrkan hos f1 kan inte regleras.
     Sound ATC2 = LoadSound((resPath + "/f2.wav").c_str()); // f2 med 400 Hz ± 10 % fyrkantvåg. f2 är styrbar från datorerna under normal drift. Den aktiveras dessutom vid ATC-larm och är härvid oberoende av om ATC-systemets matningsdon fungerar eller inte. Ljudstyrkan är reglerbar med en potentiometer på panelen.
@@ -82,7 +87,7 @@ int main() {
         BeginDrawing();
         ClearBackground(BLACK);
 
-                // ATC values
+        // ATC values
         int y = 0;
         int fontSize = 10;
         int lineHeight = 14; // slightly bigger than font size for spacing

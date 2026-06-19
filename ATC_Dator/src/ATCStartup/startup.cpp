@@ -12,11 +12,10 @@ bool floatCompare(float a, float b) {
     return false;
 }
 
-void ATC::startupSequence(ATCData &data, internalATCData &internalData, ATCReturnData &returnData) { // Rewrite for better "stages" system and better times aswell as use the brake during startup
+void ATC::startupSequence(ATCData &data, internalATCData &internalData, ATCReturnData &returnData, bool isCabA) { // Rewrite for better "stages" system and better times aswell as use the brake during startup
     // https://bransch.trafikverket.se/contentassets/438381cb6c794b85a28d090b0c280b70/handbok--trvinfra-90001-v1_0.pdf // Page 18 for error codes
     /*
     To be added:
-    Preind 01 MainInd 0   2 cabs activated
     Preind 02 MainInd 0   No contact with the panel
     Preind 03 MainInd 0   No contact with the "manöverenheten"
 
@@ -60,6 +59,13 @@ void ATC::startupSequence(ATCData &data, internalATCData &internalData, ATCRetur
     43 0 Button Increase pressed
     44 0 Button Release pressed
     */
+
+    if (isCabA != internalData.isCabA) {
+        returnData.preIndicator1 = '0';
+        returnData.preIndicator2 = '1';
+        returnData.mainIndicator1 = '0';
+        return;
+    }
 
     returnData.ATCStatus = 1;
 
