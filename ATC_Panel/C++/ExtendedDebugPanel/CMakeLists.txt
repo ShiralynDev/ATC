@@ -1,0 +1,64 @@
+cmake_minimum_required(VERSION 3.20)
+
+set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
+
+project(ATC_Panel_ExDebug)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Enable Release mode
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
+set(BUILD_SHARED_LIBS ON)
+set(BUILD_EXAMPLES OFF)
+
+# Raylib
+set(SUPPORT_X11 ON CACHE BOOL "Use X11 for windowing" FORCE)
+set(SUPPORT_WAYLAND OFF CACHE BOOL "Disable Wayland support" FORCE) # wayland may work good now but I did not when I made the cmake I copied this from
+add_subdirectory(
+    ${CMAKE_CURRENT_LIST_DIR}/../../../extern/raylib
+    ${CMAKE_BINARY_DIR}/raylib
+)
+include_directories(../../../extern/raylib/) 
+
+# ShiraNet
+include_directories(../../../extern/ShiraNet/include) 
+
+# RaylibAdditions
+include_directories(../../../extern/RaylibAdditions) 
+file(GLOB RAYLIB_ADDITIONS_SOURCES ../../../extern/RaylibAdditions/*.cpp)
+
+file(GLOB SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp)
+
+add_subdirectory(../UniversalFunctions UniversalFunctionsBuild)
+
+include_directories(${CMAKE_CURRENT_LIST_DIR}/../../../ATC_Universal)
+file(GLOB ATCUniversalSources ${CMAKE_CURRENT_LIST_DIR}/../../../ATC_Universal/*.cpp)
+
+set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+
+# Create the executable
+add_executable(ATC_Panel_ExDebug ${SOURCES} ${RAYLIB_ADDITIONS_SOURCES} ${ATCNetworkingSources} ${ATCDrawingSources} ${ATCUniversalSources})
+target_link_libraries(ATC_Panel_ExDebug PRIVATE raylib ShiraNet ATCUniversalFunctions)
+
+add_custom_command(TARGET ATC_Panel_ExDebug POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+            $<TARGET_FILE_DIR:ATC_Panel_ExDebug>/res
+
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_CURRENT_SOURCE_DIR}/../../res
+            $<TARGET_FILE_DIR:ATC_Panel_ExDebug>/res
+)
+
+# Apply Release mode specific settings
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    # Add optimization flags
+    target_compile_options(ATC_Panel_ExDebug PRIVATE -O3)
+    
+    # Optionally, strip symbols to reduce binary size
+    if (NOT WIN32)
+        target_link_options(ATC_Panel_ExDebug PRIVATE -s)
+    endif()
+endif()
